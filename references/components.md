@@ -6,8 +6,8 @@ content width `--content-max`. The page is built on the anchor band (`--band`, t
 for the top bar, the signature plate and the footer, and on `--bg` / `--paper` for the work area.
 
 **Top bar** — on the band, sticky, 1px `--band-line` at the bottom, opaque (no blur). Order: mark → product name
-→ one-line positioning with its guard clause → `Demo ·` pill → flexible space → light/dark toggle (◐,
-`aria-pressed`) → Source link. Only the positioning may shrink: it shows in full on wide screens, truncates with an
+→ one-line positioning with its guard clause → `Demo ·` pill → flexible space → light/dark toggle (a half-filled
+circle drawn as line SVG, `aria-pressed`) → Source link. Only the positioning may shrink: it shows in full on wide screens, truncates with an
 ellipsis as the bar narrows, and is hidden below about 720px; the name, pill, toggle and Source never shrink or
 overlap, and the toggle and Source stay pinned to the right. The bar holds no page action: an accent-filled button
 on the band can disappear, because in some palettes the accent is the band colour. Focus rings on the band use
@@ -30,11 +30,11 @@ that says what the page does to its rows, a short `--point` rule, then the recon
 the input rows go, and do the parts add up?"). An 8px segmented bar with 2px gaps: the first group in `--point`, the next in
 `--on-band-2`, then `--on-band-3`; rows whose value is unknown are a hatched segment sized from the data and kept
 out of the sums. Below it, a legend (swatch + label + monospace count) and one monospace equation line computed
-from the loaded rows: `26 + 8 + 6 = 40 rows · 19,527.19 + 3,632.67 + 7,103.32 = 30,263.18 ✓ reconciles to the
-cent`. The total after each `=` comes from a separate pass over every input row, in whole cents, so a row that
-lands in no group, or a cent lost in a group, turns ✓ into ✗ in danger colour: `✗ off by 4 rows and 6,232.17` when a
-status is left out of every group, `✗ off by 0.01` when one cent goes astray. Comparing
-rounded strings instead of integers would make the ✗ impossible; that is the failure to look for.
+from the loaded rows: `26 + 8 + 6 = 40 rows · 19,527.19 + 3,632.67 + 7,103.32 = 30,263.18`, then a check mark and
+`reconciles to the cent`. The total after each `=` comes from a separate pass over every input row, in whole cents,
+so a row that lands in no group, or a cent lost in a group, turns the check mark into a cross in danger colour:
+`off by 4 rows and 6,232.17` when a status is left out of every group, `off by 0.01` when one cent goes astray.
+Comparing rounded strings instead of integers would make the cross impossible; that is the failure to look for.
 
 **Provenance chip** — monospace `--text-2xs`, 1px `--border`, `--neutral-tint`, key in `--text-3` and value in bold
 `--text-2`: `src A:6`, `rule prefix`, `rev 1`, `seed 42`. In the table the first column shows only the source cell
@@ -45,7 +45,9 @@ chip is an outline in `--band-line`. A clickable chip is a link with an underlin
 **Status tag** — 21px pill, `--text-2xs` / medium. The vocabulary is fixed: Needs review (warning) · Approved /
 Booked / Sent (success) · Rejected / Failed / Unparseable (danger) · Draft (dashed border, hollow) · Simulated (info)
 · Excluded / Closed / Opted out (neutral) · Blocked (danger). Colour is never the only channel: a dot for most tags,
-`✓` for success, `⊘` for danger and blocked; the glyph is hidden from screen readers because the word says it. Never
+a check mark for success, a stop sign for danger and blocked; the mark is hidden from screen readers because the
+word says it. Every mark on the page — these, the sort arrows, the close cross, the theme toggle — is a line SVG
+(inline, or a CSS mask), never a symbol or emoji character typed into the page (ui_check C14). Never
 translated or abbreviated; never clickable (use a button).
 
 **Category** — dotted text, not a pill: a 7px square in `--brand-sage` and the name in `--text-2`. A row with no

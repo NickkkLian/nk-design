@@ -113,6 +113,8 @@ code,.mono,.num{font-family:var(--font-mono);font-variant-numeric:tabular-nums l
 .sw{flex:none;width:9px;height:9px;border-radius:2px}
 .sum-eq{padding-top:var(--space-3);border-top:1px solid var(--band-line);font:var(--weight-regular) var(--text-xs)/1.8 var(--font-mono);font-variant-numeric:tabular-nums;color:var(--on-band-2)}
 .sum-eq .ok,.sum-eq .bad{white-space:nowrap}
+.sum-eq .ok::before,.sum-eq .bad::before{content:"";display:inline-block;width:.8em;height:.8em;margin-right:.35em;vertical-align:-.04em;background:currentColor;-webkit-mask:var(--glyph) center/contain no-repeat;mask:var(--glyph) center/contain no-repeat}
+.sum-eq .ok::before{--glyph:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 10 10'%3E%3Cpath d='M1.6 5.3 4 7.6 8.4 2.4' fill='none' stroke='black' stroke-width='1.7' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E")} .sum-eq .bad::before{--glyph:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 10 10'%3E%3Cpath d='M2.4 2.4 7.6 7.6M7.6 2.4 2.4 7.6' fill='none' stroke='black' stroke-width='1.7' stroke-linecap='round'/%3E%3C/svg%3E")}
 .sum-eq .ok{color:var(--on-band)}
 .sum-eq .bad{padding:1px var(--space-2);border-radius:var(--radius-xs);background:var(--danger-tint);color:var(--danger-tint-text);font-weight:700}
 .band .chip{border-color:var(--band-line);background:transparent;color:var(--on-band-2)}
@@ -135,13 +137,14 @@ select.input{padding-right:var(--space-2)}
 .chip{display:inline-flex;align-items:center;gap:var(--space-1);height:19px;padding:0 var(--space-2);border:1px solid var(--border);border-radius:var(--radius-xs);background:var(--neutral-tint);color:var(--text-3);font:var(--weight-regular) var(--text-2xs)/1 var(--font-mono);font-variant-numeric:tabular-nums;white-space:nowrap}
 .chip b{font-weight:700;color:var(--text-2)}
 .chips{display:flex;flex-wrap:wrap;gap:var(--space-1)}
-/* status = a pill with a second channel (dot, check or stop sign); the glyphs are hidden from screen readers */
+/* status = a pill with a second channel (dot, check or stop sign), drawn as line SVG masks — no emoji or symbol
+   characters on a public page (owner, 2026-09-22); they are decoration, so screen readers get nothing from them */
 .tag{display:inline-flex;align-items:center;gap:var(--space-1);height:21px;padding:0 var(--space-2);border:1px solid transparent;border-radius:var(--radius-full);font-size:var(--text-2xs);font-weight:var(--weight-medium);white-space:nowrap}
 .tag::before{content:"";flex:none;width:5px;height:5px;border-radius:50%;background:currentColor}
 .tag-success,.tag-danger{gap:var(--space-1)}
-.tag-success::before,.tag-danger::before{width:auto;height:auto;border-radius:0;background:none;font-weight:700;line-height:1}
-.tag-success::before{content:"✓";content:"✓" / ""}
-.tag-danger::before{content:"⊘";content:"⊘" / ""}
+.tag-success::before,.tag-danger::before{width:9px;height:9px;border-radius:0;-webkit-mask:var(--glyph) center/contain no-repeat;mask:var(--glyph) center/contain no-repeat}
+.tag-success::before{--glyph:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 10 10'%3E%3Cpath d='M1.6 5.3 4 7.6 8.4 2.4' fill='none' stroke='black' stroke-width='1.7' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E")}
+.tag-danger::before{--glyph:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 10 10'%3E%3Ccircle cx='5' cy='5' r='3.8' fill='none' stroke='black' stroke-width='1.4'/%3E%3Cpath d='M2.4 7.6 7.6 2.4' stroke='black' stroke-width='1.4'/%3E%3C/svg%3E")}
 .tag-success{background:var(--success-tint);color:var(--success-tint-text)}
 .tag-warning{background:var(--warning-tint);color:var(--warning-tint-text)}
 .tag-danger{background:var(--danger-tint);color:var(--danger-tint-text)}
@@ -166,8 +169,9 @@ table.data th.num,table.data td.num{text-align:right}
 .sort{display:inline-flex;align-items:center;gap:var(--space-1);margin:0;padding:var(--space-1) 0;border:0;border-radius:var(--radius-xs);background:none;color:inherit;font:inherit;letter-spacing:inherit;text-transform:inherit;cursor:pointer}
 th.num .sort{flex-direction:row-reverse}
 th[aria-sort] .sort{color:var(--text)}
-th[aria-sort="ascending"] .sort::after{content:"↑";content:"↑" / "";color:var(--accent-text)}
-th[aria-sort="descending"] .sort::after{content:"↓";content:"↓" / "";color:var(--accent-text)}
+th[aria-sort="ascending"] .sort::after,th[aria-sort="descending"] .sort::after{content:"";width:.75em;height:.75em;background:var(--accent-text);-webkit-mask:var(--glyph) center/contain no-repeat;mask:var(--glyph) center/contain no-repeat}
+th[aria-sort="ascending"] .sort::after{--glyph:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 10 10'%3E%3Cpath d='M5 8.6V1.6M2.2 4.4 5 1.6l2.8 2.8' fill='none' stroke='black' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E")}
+th[aria-sort="descending"] .sort::after{--glyph:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 10 10'%3E%3Cpath d='M5 1.4v7M2.2 5.6 5 8.4l2.8-2.8' fill='none' stroke='black' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E")}
 table.data tbody tr{cursor:pointer}
 table.data tbody tr:focus-visible{outline-offset:-2px}
 table.data tbody tr[aria-selected="true"]{background:var(--accent-tint)}
@@ -286,7 +290,7 @@ kbd{display:inline-block;min-width:1.6em;padding:0 var(--space-1);border:1px sol
   </div>
   <span class="pill" id="demo-pill" title="Synthetic data generated in this page; nothing here is a real record.">Demo<span class="long"> · synthetic data · seed <span data-seed>42</span></span></span>
   <span class="spacer"></span>
-  <button class="tbtn" type="button" id="scheme-toggle" aria-pressed="false" aria-label="Dark appearance" title="Dark appearance"><span class="tbtn-glyph" aria-hidden="true">◐</span></button>
+  <button class="tbtn" type="button" id="scheme-toggle" aria-pressed="false" aria-label="Dark appearance" title="Dark appearance"><svg class="tbtn-glyph" width="16" height="16" viewBox="0 0 16 16" aria-hidden="true"><circle cx="8" cy="8" r="6" fill="none" stroke="currentColor" stroke-width="1.5"/><path d="M8 2a6 6 0 0 1 0 12z" fill="currentColor"/></svg></button>
   <a class="tbtn" href="https://github.com/NickkkLian/nk-design">Source</a>
 </header>
 
@@ -302,7 +306,7 @@ kbd{display:inline-block;min-width:1.6em;padding:0 var(--space-1);border:1px sol
       <div class="sum-bar" id="sum-bar" aria-hidden="true"></div>
       <ul class="sum-legend" id="sum-legend"></ul>
       <p class="sum-eq" id="sum-eq"></p>
-      <p class="caption">The total after each = comes from a separate pass over every input row, so a row that lands in no group turns the ✓ into ✗.</p>
+      <p class="caption">The total after each = comes from a separate pass over every input row, so a row that lands in no group turns the check into a cross.</p>
     </div>
   </div>
 </section>
@@ -354,7 +358,7 @@ kbd{display:inline-block;min-width:1.6em;padding:0 var(--space-1);border:1px sol
           <p class="eyebrow">Row details</p>
           <h2 class="panel-title" id="insp-title" tabindex="-1">No row selected</h2>
         </div>
-        <button class="btn btn-ghost btn-icon" type="button" id="insp-close" aria-label="Close row details" hidden><span aria-hidden="true">×</span></button>
+        <button class="btn btn-ghost btn-icon" type="button" id="insp-close" aria-label="Close row details" hidden><svg width="14" height="14" viewBox="0 0 14 14" aria-hidden="true"><path d="M3.5 3.5 10.5 10.5M10.5 3.5 3.5 10.5" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg></button>
       </div>
       <div id="insp-body"></div>
       <div class="insp-actions" id="insp-actions" hidden>
@@ -521,7 +525,7 @@ kbd{display:inline-block;min-width:1.6em;padding:0 var(--space-1);border:1px sol
       '<span>' + rec.parts.map(function (p) { return int(p.rows); }).join(" +&nbsp;") + " =&nbsp;" + int(rec.total.rows) + plural(rec.total.rows, " row", " rows") + '</span>' +
       ' <span aria-hidden="true">·</span> ' +
       '<span>' + rec.parts.map(function (p) { return money(p.cents); }).join(" +&nbsp;") + " =&nbsp;" + money(rec.total.cents) + '</span> ' +
-      (gaps.length ? '<span class="bad">✗ off by ' + gaps.join(" and ") + '</span>' : '<span class="ok">✓ reconciles to the cent</span>');
+      (gaps.length ? '<span class="bad">off by ' + gaps.join(" and ") + '</span>' : '<span class="ok">reconciles to the cent</span>');
     $("#page-title").textContent = "Where the " + int(rec.total.rows) + " input " + plural(rec.total.rows, "row", "rows") + " went";
     document.querySelectorAll("[data-n]").forEach(function (el) { el.textContent = int(rec.total.rows); });
     return rec;

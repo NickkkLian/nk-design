@@ -23,12 +23,25 @@ Checks (from the design system's 15 acceptance criteria — the machine-checkabl
       nl-theme / nl-scheme and sets data-theme and data-scheme; the <html> tag as served carries neither attribute
       (Plaster and System are the defaults and write nothing); no script still writes the legacy data-theme
       "dark" / "light" values
+  C14 icons are drawn, not typed: no emoji or symbol characters used as icons (check marks, crosses, stop signs,
+      stars, dots, half circles, warning signs…) and no CSS content that draws an arrow or a symbol; a mark is a
+      line SVG (inline, or a CSS mask). Arrows in running text are punctuation and stay.
 Exit: 0 all pass · 1 findings · 2 selftest failed / usage.
 """
 import json, os, re, sys, tempfile
+from urllib.parse import unquote
 
 PHONE = re.compile(r"\+?\d[\d\s().-]{8,}\d")
 EMAIL = re.compile(r"[A-Za-z0-9._%+-]+@[A-Za-z0-9-]+(?:\.[A-Za-z0-9-]+)+")
+# characters that are icons when they stand alone: circled operators, misc technical, geometric shapes, misc symbols,
+# dingbats, misc symbols and arrows, emoji, and the emoji variation selector (the owner, 2026-09-22: no emoji on a
+# public page; icons are line SVG)
+ICON_CHARS = re.compile("[\u2295-\u22a1\u2300-\u23ff\u25a0-\u25ff\u2600-\u27bf\u2b00-\u2bff\U0001f000-\U0001faff\ufe0f]")
+def _drawing_removed(html):
+    """The page with every data: URI decoded, so that the tags inside an SVG drawn in CSS are tags again: their
+    attributes (the path data of a line icon) go with the markup, while any text the SVG carries is still read.
+    A re-audit put a real number in an SVG's text; the first version, which skipped whole data: URIs, let it through."""
+    return re.sub(r"""url\(\s*["']?(data:[^)]*)\)""", lambda m: " " + unquote(m.group(1)) + " ", html)
 
 
 def _test_number(digits):
@@ -74,7 +87,10 @@ def checks(html):
         out.append(("C08", "no provenance chip (class chip)"))
     if not re.search(r'class="[^"]*\bsum-strip\b', html):
         out.append(("C08", "no sum strip (class sum-strip)"))
-    for u in sorted(set(re.findall(r"https?://([^/\"'\s)]+)", html))):
+    # an XML namespace (xmlns='http://www.w3.org/2000/svg' inside an SVG drawn in CSS) names a vocabulary and is
+    # never fetched; line SVG icons replaced symbol characters in 0.1.2, and their namespace is not a request
+    no_ns = re.sub(r"""xmlns(?::\w+)?\s*=\s*['"]https?://www\.w3\.org/[^'"]*['"]""", " ", html)
+    for u in sorted(set(re.findall(r"https?://([^/\"'\s)]+)", no_ns))):
         if u not in ("fonts.googleapis.com", "fonts.gstatic.com", "github.com", "www.github.com"):
             out.append(("C09", f"external host {u}"))
     if not re.search(r"<title>[^<]+</title>", html, re.I):
@@ -89,7 +105,7 @@ def checks(html):
         out.append(("C10", "viewport blocks zoom"))
     if re.search(r"grid-template-columns\s*:[^;]*\b1fr\b", low) and "minmax(0,1fr)" not in low.replace(" ", ""):
         out.append(("C11", "grid uses bare 1fr; use minmax(0,1fr) so long content cannot widen the page"))
-    text = re.sub(r"<[^>]+>", " ", html)
+    text = re.sub(r"<[^>]+>", " ", _drawing_removed(html))
     for m in PHONE.finditer(text):
         d = re.sub(r"\D", "", m.group(0))
         if 10 <= len(d) <= 12 and not _test_number(d) and not m.group(0).strip().isdigit():
@@ -97,6 +113,13 @@ def checks(html):
     for m in EMAIL.finditer(text):
         if not re.search(r"@(?:[\w.-]*example\.(?:com|org|net)|[\w.-]+\.(?:test|invalid))$", m.group(0)):
             out.append(("C12", f"non-example e-mail: {m.group(0)}")); break
+    bare = re.sub(r"<!--.*?-->|/\*.*?\*/", " ", html, flags=re.S)
+    typed = sorted(set(ICON_CHARS.findall(bare)))
+    drawn = [c for c in re.findall(r"""content\s*:\s*["']([^"']+)["']""", bare) if re.search("[\u2190-\u21ff]", c) or ICON_CHARS.search(c)]
+    # a multiplication sign that is the whole content of an element is a close icon, not arithmetic
+    drawn += re.findall(r">\s*(\u00d7)\s*<", bare)
+    if typed or drawn:
+        out.append(("C14", f"icons typed as characters, not drawn: {''.join(typed + drawn)[:20]}"))
     head = html.split("</head>")[0] if "</head>" in html else html
     first_css = min([i for i in (head.find('rel="stylesheet"'), head.find("<style")) if i >= 0] or [len(head)])
     boot = "".join(re.findall(r"<script>(.*?)</script>", head[:first_css], re.S))
@@ -118,8 +141,8 @@ if(t==='paper'||t==='ink')d.setAttribute('data-theme',t);if(s==='dark'||s==='lig
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter">
 <style>/* design-tokens */ :root{--accent:#b5674a}</style>
 <style>.x{color:var(--accent);transition:color .15s}.grid{grid-template-columns:200px minmax(0,1fr)} @media (prefers-reduced-motion: reduce){*{transition-duration:1ms}}</style>
-</head><body><header>Demo Bench <span class="pill">● Demo · synthetic data</span><button class="btn-primary">Export</button></header>
-<div class="sum-strip">3 + 2 = 5 ✓</div><table><thead><tr><th aria-sort="none"><button>Name</button></th></tr></thead><tbody><tr><td><span class="chip">src A:6</span></td></tr></tbody></table>
+</head><body><header>Demo Bench <span class="pill">Demo · synthetic data</span><button class="btn-primary">Export</button></header>
+<div class="sum-strip">3 + 2 = 5 <span class="ok">reconciles</span></div><table><thead><tr><th aria-sort="none"><button>Name</button></th></tr></thead><tbody><tr><td><span class="chip">src A:6</span></td></tr></tbody></table>
 <footer><h2>About this demo</h2><h2>Not verified here</h2><h2>Source</h2> a@example.com +1 202 555 0101</footer></body></html>"""
 
 
@@ -135,8 +158,11 @@ def selftest():
              ("C03", GOOD.replace('<th aria-sort="none"><button>Name</button></th>', "<th>Name</th>")),
              ("C04", GOOD.replace("transition:color .15s", "transition:all .15s")),
              ("C05", GOOD.replace(".x{color:var(--accent);", ".x{outline:none;color:var(--accent);")),
-             ("C06", GOOD.replace("<h2>Source</h2>", "<h2>Source</h2><p>Trusted by 500 teams ★</p>")),
-             ("C07", GOOD.replace("● Demo · synthetic data", "synthetic data")),
+             ("C06", GOOD.replace("<h2>Source</h2>", "<h2>Source</h2><p>Trusted by 500 teams</p>")),
+             ("C07", GOOD.replace("Demo · synthetic data", "synthetic data")),
+             ("C14", GOOD.replace("<h2>Source</h2>", "<h2>Source</h2><p><span>\u2713</span> reconciles</p>")),
+             ("C14", GOOD.replace(".x{color:var(--accent);", ".x::after{content:'\u2191'}.x{color:var(--accent);")),
+             ("C14", GOOD.replace("<h2>Source</h2>", '<h2>Source</h2><button type="button" aria-label="Close">\u00d7</button>')),
              ("C08", GOOD.replace('class="chip"', 'class="tag"')),
              ("C09", GOOD.replace("https://fonts.googleapis.com/css2?family=Inter", "https://cdn.example.net/x.css")),
              ("C10", GOOD.replace('content="width=device-width, initial-scale=1"', 'content="width=device-width, initial-scale=1, maximum-scale=1"')),
@@ -156,6 +182,14 @@ def selftest():
     for code, html in cases:
         got = {c for c, _ in checks(html)}
         chk(got == {code}, f"{code} sample → exactly {{{code}}} (got {sorted(got)})")
+    # a line icon drawn as an SVG mask in CSS: its namespace is not a request (C09) and its path is not a phone (C12)
+    svg = GOOD.replace(".x{color:var(--accent);", ".x{-webkit-mask:url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' "
+                       "viewBox='0 0 10 10'%3E%3Cpath d='M1.6 5.3 4 7.6 8.4 2.4'/%3E%3C/svg%3E\");color:var(--accent);")
+    chk(svg != GOOD and checks(svg) == [], f"a line SVG icon in CSS → 0 findings ({checks(svg)})")
+    # but an SVG in a data: URI still has its text read: a real-looking number hidden in it is caught
+    hidden = GOOD.replace(".x{color:var(--accent);", ".x{-webkit-mask:url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' "
+                          "viewBox='0 0 10 10'%3E%3Ctext%3E+1 604 000 0000%3C/text%3E%3C/svg%3E\");color:var(--accent);")
+    chk({c for c, _ in checks(hidden)} == {"C12"}, f"a number written as text inside a data: URI SVG → C12 ({checks(hidden)})")
     # in-process, with the self-test switched off: main() runs this self-test on every start, so calling the command
     # line from here would recurse without end (it did once, 2026-09-16, and filled the machine's process table)
     import contextlib, io

@@ -4,7 +4,7 @@ description: Build a single-file data tool from one sentence (a review queue, a 
 license: MIT
 metadata:
   provenance: the author's own product-family design system (2026-09), rebuilt after four public data tools shipped with different looks and no visible sources; see Provenance
-  version: 0.1.0
+  version: 0.1.2
 ---
 # Evidence-visible design
 
@@ -44,8 +44,8 @@ status words are a fixed vocabulary, simulated actions say so, and the footer sa
    converges: one display face for titles, one sans for the interface, one monospace face for numbers and
    identifiers, small radii, borders before shadows.
 5. **Use the status vocabulary as given** (`references/components.md` §tag): Needs review · Approved / Booked
-   / Sent · Rejected / Failed · Draft · Simulated · Excluded · Blocked. A second channel beside the word
-   (dot, ✓ or ⊘), never colour alone.
+   / Sent · Rejected / Failed · Draft · Simulated · Excluded · Blocked. A second channel beside the word — a dot,
+   a check mark or a stop sign, drawn as line SVG and never typed as a symbol or emoji — never colour alone.
 6. **Be honest by construction** (`references/honesty.md`): synthetic data looks synthetic and is labelled
    `Demo ·`; every number on the page is computed from the loaded data; nothing simulated shows as sent;
    the footer carries About this demo / Not verified here / Source.

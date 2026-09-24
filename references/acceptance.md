@@ -1,6 +1,6 @@
 # Acceptance: what "looks like a finished product" means (15 checks)
 
-The machine rules are in `scripts/ui_check.py` (C01–C13). They are not a subset of this list and they do not
+The machine rules are in `scripts/ui_check.py` (C01–C14). They are not a subset of this list and they do not
 cover it: ten of the fifteen checks below name at least one C code, five (4, 5, 7, 13, 14) have no machine rule
 at all, and only #12 is settled by the checker alone — every other row still needs a browser or a person.
 

@@ -5,7 +5,7 @@ where every number came from). The checks that can be decided by reading the fil
     python3 ui_check.py <index.html> [--json OUT]
     python3 ui_check.py --selftest
 
-Checks (from the design system's 15 acceptance criteria — the machine-checkable subset):
+Checks (what reading the file can decide; not a subset of the 15 acceptance criteria — see references/acceptance.md):
   C01 exactly one primary action button (class btn-primary) in the document
   C02 no hard-coded colours outside the token block (a <style> whose first line contains 'design-tokens' or a
       <link> to design-tokens.css is exempt); hex/rgb/hsl literals elsewhere must carry a 'why:' comment

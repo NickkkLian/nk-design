@@ -9,13 +9,13 @@ before release to prove their checks react.
 
 ![nk-design demo: one idea in, a finished page out](https://raw.githubusercontent.com/NickkkLian/nickkk-skills/main/gallery/nk-design.gif)
 
-The demo above was recorded with 0.1.0. Since 0.1.2 the page draws its icons as line SVG instead of characters.
+The demo above was recorded with 0.1.2. Since 0.1.2 the page draws its icons as line SVG instead of characters.
 
 ## What it does
 
 - Seven invariants: a top bar on the anchor band, a mark built by rule, a signature plate whose reconciliation bar is computed from the loaded data and adds up, a provenance chip beside every derived value, a fixed status vocabulary with a second channel besides colour, an honesty footer, one token file.
 - `assets/design-tokens.css` (three palettes, each in light and dark, text colours solved for contrast) and `assets/starter.html`, a working workbench with synthetic data: filter, sortable table, row inspector, theme picker, and totals computed on the page.
-- `scripts/ui_check.py`: thirteen machine rules, including the appearance contract that restores a saved theme before first paint. `references/acceptance.md` is the separate list of fifteen checks a finished page passes: ten of them name a machine rule, five have none, and only one is settled without opening a browser.
+- `scripts/ui_check.py`: fourteen machine rules, including the appearance contract that restores a saved theme before first paint. `references/acceptance.md` is the separate list of fifteen checks a finished page passes: ten of them name a machine rule, five have none, and only one is settled without opening a browser.
 
 The full procedure, the boundaries and where the rules came from are in [SKILL.md](SKILL.md).
 

@@ -1,10 +1,10 @@
 ---
 name: nk-design
-description: Build a single-file data tool from one sentence (a review queue, a ledger, a tracker, an admin panel) in a design system where every number shows where it came from and what was not checked. The page carries provenance chips beside derived values, a reconciliation bar on the first screen whose parts are computed live and add up, a fixed status vocabulary that never relies on colour alone, a Demo marker for synthetic data and a footer that says what is not verified. Three palettes and light/dark come from one token file, restored before first paint. Ships the token file, a working starter page and scripts/ui_check.py with thirteen machine checks. Use when asked for a dashboard, queue, ledger, tracker or internal tool, when a demo has to read as a real product in thirty seconds, or to review such a page. Not a marketing-site style and not a component library.
+description: Build a single-file data tool from one sentence (a review queue, a ledger, a tracker, an admin panel) in a design system where every number shows where it came from and what was not checked. The page carries provenance chips beside derived values, a reconciliation bar on the first screen whose parts are computed live and add up, a fixed status vocabulary that never relies on colour alone, a Demo marker for synthetic data and a footer that says what is not verified. Three palettes and light/dark come from one token file, restored before first paint. Ships the token file, a working starter page and scripts/ui_check.py with fourteen machine rules. Use when asked for a dashboard, queue, ledger, tracker or internal tool, when a demo has to read as a real product in thirty seconds, or to review such a page. Not a marketing-site style and not a component library.
 license: MIT
 metadata:
   provenance: the author's own product-family design system (2026-09), rebuilt after four public data tools shipped with different looks and no visible sources; see Provenance
-  version: 0.1.2
+  version: 0.1.3
 ---
 # Evidence-visible design
 
@@ -53,11 +53,11 @@ status words are a fixed vocabulary, simulated actions say so, and the footer sa
    palette and scheme (or `?theme=` / `?scheme=` in the URL) and sets `data-theme` / `data-scheme` before the
    first paint. The defaults write no attribute, so the page as served has neither. The picker lives in a
    Settings card; one `theme-color` meta follows the chosen surface.
-8. **Check before you show it**: `python3 ${CLAUDE_SKILL_DIR}/scripts/ui_check.py index.html` runs thirteen
+8. **Check before you show it**: `python3 ${CLAUDE_SKILL_DIR}/scripts/ui_check.py index.html` runs fourteen
    rules (one primary button, no hard-coded colours outside the token block, sortable tables, no
    `transition: all` and a reduced-motion block, focus never removed silently, honesty words, demo marker,
    chip and reconciliation bar present, only font and GitHub hosts, meta tags, `minmax(0,1fr)`, no
-   real-looking contacts, the appearance contract). Then the browser list in `references/acceptance.md`
+   real-looking contacts, the appearance contract, icons drawn as SVG rather than typed as characters). Then the browser list in `references/acceptance.md`
    (first screen at 1280×800, 375 px wide with real data volume, keyboard path, every palette in light and
    dark, contrast).
 9. **Ship with the page**: a 1280-wide screenshot in the README, the demo link, the one-line positioning

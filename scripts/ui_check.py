@@ -34,13 +34,13 @@ from urllib.parse import unquote
 PHONE = re.compile(r"\+?\d[\d\s().-]{8,}\d")
 EMAIL = re.compile(r"[A-Za-z0-9._%+-]+@[A-Za-z0-9-]+(?:\.[A-Za-z0-9-]+)+")
 # characters that are icons when they stand alone: circled operators, misc technical, geometric shapes, misc symbols,
-# dingbats, misc symbols and arrows, emoji, and the emoji variation selector (the owner, 2026-09-22: no emoji on a
-# public page; icons are line SVG)
+# dingbats, misc symbols and arrows, emoji, and the emoji variation selector (no emoji on a public page; icons are
+# line SVG)
 ICON_CHARS = re.compile("[\u2295-\u22a1\u2300-\u23ff\u25a0-\u25ff\u2600-\u27bf\u2b00-\u2bff\U0001f000-\U0001faff\ufe0f]")
 def _drawing_removed(html):
     """The page with every data: URI decoded, so that the tags inside an SVG drawn in CSS are tags again: their
     attributes (the path data of a line icon) go with the markup, while any text the SVG carries is still read.
-    A re-audit put a real number in an SVG's text; the first version, which skipped whole data: URIs, let it through."""
+    A real number in an SVG's text must still be caught; the first version, which skipped whole data: URIs, missed it."""
     return re.sub(r"""url\(\s*["']?(data:[^)]*)\)""", lambda m: " " + unquote(m.group(1)) + " ", html)
 
 

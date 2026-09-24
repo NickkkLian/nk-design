@@ -4,8 +4,8 @@
 
 An agent skill for [Claude Code](https://code.claude.com) and [OpenAI Codex](https://developers.openai.com/codex). Build a single-file data tool from one sentence (a review queue, a ledger, a tracker, an admin panel) in a design system where every number shows where it came from and what was not checked.
 
-Part of [nickkk-skills](https://github.com/NickkkLian/nickkk-skills) — agent skills whose scripts were broken on purpose
-before release to prove their checks react.
+Part of [nickkk-skills](https://github.com/NickkkLian/nickkk-skills) — agent skills that ship a self-test with every script; the Verify
+section below says which of them were broken on purpose before release to prove they react.
 
 ![nk-design demo: one idea in, a finished page out](https://raw.githubusercontent.com/NickkkLian/nickkk-skills/main/gallery/nk-design.gif)
 
@@ -30,6 +30,14 @@ The full procedure, the boundaries and where the rules came from are in [SKILL.m
 7. Keep the appearance contract
 8. Check before you show it
 9. Ship with the page
+
+## Why it is built this way
+
+**The idea.** A data tool is believed when its numbers can be traced, added up and questioned on the screen, not when it is pretty.
+
+**Where it came from.** The first version was written after four public data tools each shipped with a different look and none of them showed where their numbers came from; the seven invariants, the signature elements and the honesty constraints were written for what a stranger checks in the first thirty seconds.
+
+**Evidence.** What was broken on purpose to show that the self-tests can fail is under [Verify](#verify); what was run end to end, and in which agent, is under [Compatibility](#compatibility).
 
 ## Install
 

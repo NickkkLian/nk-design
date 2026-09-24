@@ -138,7 +138,7 @@ select.input{padding-right:var(--space-2)}
 .chip b{font-weight:700;color:var(--text-2)}
 .chips{display:flex;flex-wrap:wrap;gap:var(--space-1)}
 /* status = a pill with a second channel (dot, check or stop sign), drawn as line SVG masks — no emoji or symbol
-   characters on a public page (owner, 2026-09-22); they are decoration, so screen readers get nothing from them */
+   characters on a public page; they are decoration, so screen readers get nothing from them */
 .tag{display:inline-flex;align-items:center;gap:var(--space-1);height:21px;padding:0 var(--space-2);border:1px solid transparent;border-radius:var(--radius-full);font-size:var(--text-2xs);font-weight:var(--weight-medium);white-space:nowrap}
 .tag::before{content:"";flex:none;width:5px;height:5px;border-radius:50%;background:currentColor}
 .tag-success,.tag-danger{gap:var(--space-1)}

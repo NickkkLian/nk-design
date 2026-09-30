@@ -15,7 +15,8 @@ The demo above was recorded with 0.1.2. Since 0.1.2 the page draws its icons as 
 
 - Seven invariants: a top bar on the anchor band, a mark built by rule, a signature plate whose reconciliation bar is computed from the loaded data and adds up, a provenance chip beside every derived value, a fixed status vocabulary with a second channel besides colour, an honesty footer, one token file.
 - `assets/design-tokens.css` (three palettes, each in light and dark, text colours solved for contrast) and `assets/starter.html`, a working workbench with synthetic data: filter, sortable table, row inspector, theme picker, and totals computed on the page.
-- `scripts/ui_check.py`: fourteen machine rules, including the appearance contract that restores a saved theme before first paint. `references/acceptance.md` is the separate list of fifteen checks a finished page passes: ten of them name a machine rule, five have none, and only one is settled without opening a browser.
+- `scripts/ui_check.py`: fifteen machine rules, including the appearance contract that restores a saved theme before first paint. `references/acceptance.md` is the separate list of fifteen checks a finished page passes: ten of them name a machine rule, five have none, and only one is settled without opening a browser.
+- Every number in the starter's reconciliation bar can be clicked: its rows, how it was computed and what was not checked, from the shared number-sources layer (`numsrc.py`, C15).
 
 The full procedure, the boundaries and where the rules came from are in [SKILL.md](SKILL.md).
 
@@ -113,12 +114,16 @@ In this skill's Codex run, every call into the skill folder's scripts/ used that
 ## Verify
 
 ```bash
+python3 scripts/numsrc.py --selftest
 python3 scripts/ui_check.py --selftest
 ```
 
 Standard library only, Python 3.9+. Before publishing, the guarded lines of each script were
 mutated one at a time in a sandbox copy and the self-test was confirmed to go red on the named
 assertion, without a traceback; the unmutated control stayed green.
+numsrc.py, the number-sources layer shared with four other skills: each of its 16 lines that report a
+finding was disabled in a sandbox copy, found by reading the source rather than listed by hand, and its self-test went
+red each time; the unmutated copy stayed green.
 
 ## Limits
 

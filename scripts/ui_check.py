@@ -26,10 +26,17 @@ Checks (what reading the file can decide; not a subset of the 15 acceptance crit
   C14 icons are drawn, not typed: no emoji or symbol characters used as icons (check marks, crosses, stop signs,
       stars, dots, half circles, warning signs…) and no CSS content that draws an arrow or a symbol; a mark is a
       line SVG (inline, or a CSS mask). Arrows in running text are punctuation and stay.
+  C15 clickable number sources: the page carries the shared number-sources layer unchanged (numsrc.js and
+      numsrc.css, byte for byte), a manifest whose every entry says where the number came from, how it was worked
+      out and what was not checked (numsrc.py check: N01 N03 N07 N08), and marks at least one number with
+      data-nk-src
 Exit: 0 all pass · 1 findings · 2 selftest failed / usage.
 """
 import json, os, re, sys, tempfile
 from urllib.parse import unquote
+
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+import numsrc  # noqa: E402  — the clickable number sources layer shared with the other nk-* page skills
 
 PHONE = re.compile(r"\+?\d[\d\s().-]{8,}\d")
 EMAIL = re.compile(r"[A-Za-z0-9._%+-]+@[A-Za-z0-9-]+(?:\.[A-Za-z0-9-]+)+")
@@ -130,6 +137,11 @@ def checks(html):
         out.append(("C13", "the <html> tag ships a theme attribute; defaults must write none"))
     if re.search(r"""dataset\.theme\s*=|setAttribute\(\s*['"]data-theme['"]\s*,\s*['"](dark|light)['"]""", html):
         out.append(("C13", "a script writes the legacy data-theme dark/light value; use data-scheme"))
+    broken = [f for f in numsrc.check(html) if f[1] == "error" and f[0] in ("N01", "N03", "N07", "N08")]
+    if broken:
+        out.append(("C15", f"number sources cannot open ({broken[0][0]}: {broken[0][2][:90]})"))
+    if "data-nk-src=" not in html.replace(numsrc.runtime_js(), ""):
+        out.append(("C15", "no number is marked with data-nk-src, so none can be clicked for its source"))
     return out
 
 
@@ -144,6 +156,9 @@ if(t==='paper'||t==='ink')d.setAttribute('data-theme',t);if(s==='dark'||s==='lig
 </head><body><header>Demo Bench <span class="pill">Demo · synthetic data</span><button class="btn-primary">Export</button></header>
 <div class="sum-strip">3 + 2 = 5 <span class="ok">reconciles</span></div><table><thead><tr><th aria-sort="none"><button>Name</button></th></tr></thead><tbody><tr><td><span class="chip">src A:6</span></td></tr></tbody></table>
 <footer><h2>About this demo</h2><h2>Not verified here</h2><h2>Source</h2> a@example.com +1 202 555 0101</footer></body></html>"""
+_SRC = numsrc.Sources("sample", not_checked=["The sample is invented."])
+_SRC.add("rows", "Input rows", [{"text": "the sample's rows"}], "computation", "count of every row", ["Nothing was checked."], value="5")
+GOOD = numsrc.inject(GOOD.replace("3 + 2 = 5", '3 + 2 = <b data-nk-src="rows">5</b>'), _SRC)
 
 
 def selftest():
@@ -178,7 +193,11 @@ def selftest():
              ("C04", GOOD.replace("@media (prefers-reduced-motion: reduce){*{transition-duration:1ms}}", "")),
              ("C06", GOOD.replace("<h2>Not verified here</h2>", "")),
              ("C08", GOOD.replace('class="sum-strip"', 'class="strip"')),
-             ("C12", GOOD.replace("a@example.com", "a@demo.example"))]      # .example is reserved: no real mailbox
+             ("C12", GOOD.replace("a@example.com", "a@demo.example")),      # .example is reserved: no real mailbox
+             ("C15", GOOD.replace('<b data-nk-src="rows">5</b>', "<b>5</b>")),
+             ("C15", GOOD.replace('"not_checked": [\n        "Nothing was checked."\n      ]', '"not_checked": []')),
+             ("C15", GOOD.replace("'use strict';", "'use strict'; var edited = 1;")),
+             ("C15", re.sub(r'<script type="application/json" id="nk-sources">.*?</script>', "", GOOD, flags=re.S))]
     for code, html in cases:
         got = {c for c, _ in checks(html)}
         chk(got == {code}, f"{code} sample → exactly {{{code}}} (got {sorted(got)})")

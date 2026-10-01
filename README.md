@@ -1,15 +1,60 @@
 # nk-design
 
-![nk-design](https://raw.githubusercontent.com/NickkkLian/nickkk-skills/main/gallery/social/nk-design.png)
-
 An agent skill for [Claude Code](https://code.claude.com) and [OpenAI Codex](https://developers.openai.com/codex). Build a single-file data tool from one sentence (a review queue, a ledger, a tracker, an admin panel) in a design system where every number shows where it came from and what was not checked.
+
+**What you get.** The starter page every run adapts: 40 invented rows, a first screen that adds up to the cent, and a source on every row. An agent run rewrites the rows, the labels and the arithmetic for the tool you ask for. Recorded on 2026-09-30 with 0.1.9.
+
+![nk-design: a ledger page: a reconciliation bar that adds up to the cent, and rows that each show their source cell](https://raw.githubusercontent.com/NickkkLian/nickkk-skills/main/gallery/results/nk-design.png)
+
+## Try it
+
+Nothing is installed and nothing under `~/.claude` changes: clone, run the self-tests, run the example. It writes only `demo*` files inside the clone.
+
+```bash
+git clone https://github.com/NickkkLian/nk-design && cd nk-design
+python3 scripts/numsrc.py --selftest
+python3 scripts/ui_check.py --selftest
+mkdir -p demo && cp assets/starter.html demo/index.html && cp assets/design-tokens.css demo/
+python3 scripts/ui_check.py demo/index.html
+python3 -c "s = open('demo/index.html').read(); open('demo/planted.html', 'w').write(s.replace('class=\"btn\"', 'class=\"btn btn-primary\"', 1))"
+python3 scripts/ui_check.py demo/planted.html
+```
+
+Each self-test ends on its own line:
+
+```text
+selftest: 50/50
+ui_check selftest · 34/34 passed
+```
+
+The example commands print this (recorded in a fresh copy with an empty home folder; the path of the clone is taken out):
+
+```text
+$ python3 scripts/ui_check.py demo/index.html
+✔ demo/index.html: 0 findings
+$ python3 scripts/ui_check.py demo/planted.html
+✘ demo/planted.html: 1 findings
+    C01  2 primary buttons (want exactly 1)
+```
+
+Open `demo/index.html`: it is the page in the picture above. The last command exits 1 on purpose: the line before it gave a second button the primary class in a copy, and rule C01 allows one.
+
+### What to type
+
+With the skill installed ([Install](#install)), ask in plain words. This is the request a recorded test run used; it never names the skill:
+
+> I run a two-person bookkeeping practice. Every week we export the week's invoice rows from the bank and one of us has to go through them before anything is booked: some rows have no amount, some match none of our naming rules, and the export usually contains a few exact duplicates.
+>
+> Build me one page I can open in a browser to work through a week. I want to see at a glance how the week's rows split and that the parts still add up, decide row by row, and be able to answer my colleague when she asks where a number came from. Use made-up rows for now.
+
+![nk-design](https://raw.githubusercontent.com/NickkkLian/nickkk-skills/main/gallery/social/nk-design.png)
 
 Part of [nickkk-skills](https://github.com/NickkkLian/nickkk-skills) — agent skills that ship a self-test with every script; the Verify
 section below says which of them were broken on purpose before release to prove they react.
 
 ![nk-design demo: one idea in, a finished page out](https://raw.githubusercontent.com/NickkkLian/nickkk-skills/main/gallery/nk-design.gif)
 
-The demo above was recorded with 0.1.2. Since 0.1.2 the page draws its icons as line SVG instead of characters.
+The demo above is a real agent run recorded with 0.1.2 on 2026-09-23. Its second line copies the starter page because that is step 1 of the procedure; the run then rewrote the rows, the labels and the arithmetic for a bookkeeping practice, in 16 turns. 0.1.2 had fourteen machine rules and that page passed all of them; the fifteenth (every marked number opens its source) came with 0.1.5, and that page predates it. Since 0.1.2 the page also draws its icons as line SVG instead of characters.
 
 ## What it does
 
@@ -22,15 +67,15 @@ The full procedure, the boundaries and where the rules came from are in [SKILL.m
 
 ## How it works
 
-1. Start from the starter page
-2. Map the sentence onto the starter's three parts
-3. Keep the seven invariants
-4. Spend boldness in one place
-5. Use the status vocabulary as given
-6. Be honest by construction
-7. Keep the appearance contract
-8. Check before you show it
-9. Ship with the page
+1. Start from the starter page, not from a blank file: copy `assets/starter.html` and `assets/design-tokens.css` into the same folder.
+2. Map the sentence onto the starter's three parts: what one row is (its fields, statuses and source), what the first screen has to add up (the reconciliation bar's segments and total), and what a person decides for a row (the inspector's actions).
+3. Keep the seven invariants in `references/invariants.md`.
+4. Spend boldness in one place. The deep anchor colour carries the top bar, the signature plate, the footer and the one primary button; one point colour stays on a small share of the page; everything else converges: one display face for titles, one sans for the interface, one monospace face for numbers and identifiers, small radii, borders before shadows.
+5. Use the status vocabulary as given (`references/components.md` §tag): Needs review · Approved / Booked / Sent · Rejected / Failed · Draft · Simulated · Excluded · Blocked.
+6. Be honest by construction (`references/honesty.md`): synthetic data is invented and the page is labelled `Demo ·`, every number on the page is computed from the loaded data, and nothing simulated shows as sent.
+7. Keep the appearance contract. A small script in `<head>`, before the first stylesheet, reads the saved palette and scheme (or `?theme=` / `?scheme=` in the URL) and sets `data-theme` / `data-scheme` before the first paint.
+8. Check before you show it.
+9. Ship with the page: a 1280-wide screenshot in the README, the demo link, the one-line positioning sentence with its guard clause ("… — every row stays traceable").
 
 ## Why it is built this way
 
@@ -105,7 +150,7 @@ git clone https://github.com/NickkkLian/nk-design.git ~/.agents/skills/nk-design
 
 | Agent | Tested | What was checked |
 |---|---|---|
-| Claude Code (CLI 2.1.173, macOS) | yes | In a fresh project with an isolated Claude config, inside a macOS sandbox that blocked reading the tester's ~/.claude folder (settings, session history, memory), Desktop, Documents and Downloads, SSH keys and git identity, a plain request that never names the skill triggered it and it ran its bundled script. The route 2 plugin commands were also run from a shell with an isolated config: marketplace add, install, list. Here the request was a bookkeeping review page, and the run produced an adapted product rather than a copy of the starter: its own product name and status words, a reconciliation equation computed from its own rows, and a provenance chip on every row. scripts/ui_check.py reports 0 findings on what it built, and the token file came through byte for byte. The run used up the 14-turn limit of the test harness while polishing, so it ended on that limit and the harness's final assertion never ran. |
+| Claude Code (CLI 2.1.173, macOS) | yes | In a fresh project with an isolated Claude config, inside a macOS sandbox that blocked reading the tester's ~/.claude folder (settings, session history, memory), Desktop, Documents and Downloads, SSH keys and git identity, a plain request that never names the skill triggered it and it ran its bundled script. The route 2 plugin commands were also run from a shell with an isolated config: marketplace add, install, list. Here the request was a bookkeeping review page, and the run produced an adapted product rather than a copy of the starter: its own product name and status words, a reconciliation equation computed from its own rows, and a provenance chip on every row. This describes the run of 2026-09-23 on version 0.1.2: it finished in 16 turns of a 24-turn limit, the test harness's final assertion passed, the token file came through byte for byte, and scripts/ui_check.py reported 0 findings with the fourteen rules that version had. The fifteenth rule (C15, every marked number opens its source) came with 0.1.5: that page predates it, and today's checker reports it there. An earlier run, on 2026-09-17, ended on a 14-turn limit before the harness's assertion ran. No recorded agent run uses 0.1.5 or later. |
 | OpenAI Codex CLI (0.154.0-alpha.6.2, gpt-5.6-sol, low reasoning, macOS) | yes | Copied into `~/.agents/skills` of a temporary home (the folder route 4 clones into), in a fresh project, without the user's Codex config. From a plain request that never names the skill, Codex read SKILL.md, built the page from the starter and ran `scripts/ui_check.py` itself; the page it produced reports 0 findings. |
 | Cursor, Gemini CLI | no | Not tested. Their documentation says both read `~/.agents/skills`, the folder route 4 clones into; Gemini CLI asks before it activates a skill. |
 

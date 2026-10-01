@@ -2,7 +2,7 @@
 
 An agent skill for [Claude Code](https://code.claude.com) and [OpenAI Codex](https://developers.openai.com/codex). Build a single-file data tool from one sentence (a review queue, a ledger, a tracker, an admin panel) in a design system where every number shows where it came from and what was not checked.
 
-**What you get.** The starter page every run adapts: 40 invented rows, a first screen that adds up to the cent, and a source on every row. An agent run rewrites the rows, the labels and the arithmetic for the tool you ask for. Recorded on 2026-09-30 with 0.1.9.
+**What you get.** The starter page every run adapts: 40 invented rows, a first screen that adds up to the cent, and a source on every row. An agent run rewrites the rows, the labels and the arithmetic for the tool you ask for. Recorded on 2026-10-01 with 0.1.10.
 
 ![nk-design: a ledger page: a reconciliation bar that adds up to the cent, and rows that each show their source cell](https://raw.githubusercontent.com/NickkkLian/nickkk-skills/main/gallery/results/nk-design.png)
 
@@ -24,7 +24,7 @@ Each self-test ends on its own line:
 
 ```text
 selftest: 50/50
-ui_check selftest · 34/34 passed
+ui_check selftest · 36/36 passed
 ```
 
 The example commands print this (recorded in a fresh copy with an empty home folder; the path of the clone is taken out):
@@ -54,7 +54,7 @@ section below says which of them were broken on purpose before release to prove 
 
 ![nk-design demo: one idea in, a finished page out](https://raw.githubusercontent.com/NickkkLian/nickkk-skills/main/gallery/nk-design.gif)
 
-The demo above is a real agent run recorded with 0.1.2 on 2026-09-23. Its second line copies the starter page because that is step 1 of the procedure; the run then rewrote the rows, the labels and the arithmetic for a bookkeeping practice, in 16 turns. 0.1.2 had fourteen machine rules and that page passed all of them; the fifteenth (every marked number opens its source) came with 0.1.5, and that page predates it. Since 0.1.2 the page also draws its icons as line SVG instead of characters.
+The demo above is a real agent run recorded with 0.1.9 on 2026-10-01. Its second line copies the starter page because that is step 1 of the procedure; the run then rewrote the rows, the labels and the arithmetic for a bookkeeping practice, in 24 turns. The page it wrote passes all fifteen machine rules. Afterwards a script clicked through every control on that page in headless Chrome with real mouse events, at 1280 and at 375 wide: 53 steps each, no defect (the status menu's options were set by script, and no person has used it on a phone). 0.1.10 fixes what that run showed in the starter and was not re-recorded: the starter's version label had gone stale (the self-test now compares it with SKILL.md), a number panel said "synthetic" twice, and the clickable numbers took a click only on their digits, 7 px wide for a single one.
 
 ## What it does
 
@@ -150,7 +150,7 @@ git clone https://github.com/NickkkLian/nk-design.git ~/.agents/skills/nk-design
 
 | Agent | Tested | What was checked |
 |---|---|---|
-| Claude Code (CLI 2.1.173, macOS) | yes | In a fresh project with an isolated Claude config, inside a macOS sandbox that blocked reading the tester's ~/.claude folder (settings, session history, memory), Desktop, Documents and Downloads, SSH keys and git identity, a plain request that never names the skill triggered it and it ran its bundled script. The route 2 plugin commands were also run from a shell with an isolated config: marketplace add, install, list. Here the request was a bookkeeping review page, and the run produced an adapted product rather than a copy of the starter: its own product name and status words, a reconciliation equation computed from its own rows, and a provenance chip on every row. This describes the run of 2026-09-23 on version 0.1.2: it finished in 16 turns of a 24-turn limit, the test harness's final assertion passed, the token file came through byte for byte, and scripts/ui_check.py reported 0 findings with the fourteen rules that version had. The fifteenth rule (C15, every marked number opens its source) came with 0.1.5: that page predates it, and today's checker reports it there. An earlier run, on 2026-09-17, ended on a 14-turn limit before the harness's assertion ran. No recorded agent run uses 0.1.5 or later. |
+| Claude Code (CLI 2.1.173, macOS) | yes | In a fresh project with an isolated Claude config, inside a macOS sandbox that blocked reading the tester's ~/.claude folder (settings, session history, memory), Desktop, Documents and Downloads, SSH keys and git identity, a plain request that never names the skill triggered it and it ran its bundled script. The route 2 plugin commands were also run from a shell with an isolated config: marketplace add, install, list. Here the request was a bookkeeping review page, and the run produced an adapted product rather than a copy of the starter: its own product name and labels, a reconciliation equation computed from its own rows, and a source chip on every row. This describes the run of 2026-10-01 on version 0.1.9: it finished in 24 turns of a 60-turn limit, the test harness's final assertion passed, the token file came through byte for byte, and scripts/ui_check.py reported 0 findings with all fifteen rules. A run earlier the same day stopped on a 30-turn limit before it had run the checker. Earlier versions: the run of 2026-09-23 on 0.1.2 finished in 16 turns of a 24-turn limit; one on 2026-09-17 ended on a 14-turn limit before the harness's assertion ran. |
 | OpenAI Codex CLI (0.154.0-alpha.6.2, gpt-5.6-sol, low reasoning, macOS) | yes | Copied into `~/.agents/skills` of a temporary home (the folder route 4 clones into), in a fresh project, without the user's Codex config. From a plain request that never names the skill, Codex read SKILL.md, built the page from the starter and ran `scripts/ui_check.py` itself; the page it produced reports 0 findings. |
 | Cursor, Gemini CLI | no | Not tested. Their documentation says both read `~/.agents/skills`, the folder route 4 clones into; Gemini CLI asks before it activates a skill. |
 
@@ -176,6 +176,8 @@ red each time; the unmutated copy stayed green.
 - The token file is a starting palette: change the brand names, and if you change colours keep the contrast pairs (every text colour in the file was solved against the hardest surface of its theme).
 - No external component library and no CDN scripts. Web fonts are the only optional external request: the page must open offline with system fonts in their place and nothing else changed.
 - The starter ships synthetic data only. Loading real records is the user's decision, and it changes what the footer has to say.
+- At phone width the starter's table scrolls sideways inside its own box. At 375 px the first two columns show, the third is cut, and the amount, the status and the Open button need a swipe; the page itself does not scroll sideways.
+- The clickable numbers are small touch targets. A click lands on a box about 25 px wide and 21 px tall around a single digit, below the 44 px usually asked of a touch target. They were clicked by script in headless Chrome; nobody has tried them with a finger.
 
 ## License
 
